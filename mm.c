@@ -219,7 +219,7 @@ static void *coalesce(void *bp)
     size_t size = GET_SIZE(HDRP(bp));
 
     // case 1 가용 없음
-    if (prev_alloc && next_alloc)
+    if (prev_alloc && next_alloc) 
     {
         add_free_block(bp);
         return bp;
