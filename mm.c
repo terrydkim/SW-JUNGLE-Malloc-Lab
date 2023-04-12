@@ -68,7 +68,7 @@ team_t team = {
 
 /* explicit */
 #define PREV_FREEP(bp) (*(void **)(bp))
-#define NEXT_FREEP(bp) (*(void **)(bp + WSIZE)) 
+#define NEXT_FREEP(bp) (*(void **)(bp + WSIZE))
 
 /* Given block ptr bp, compute address of next and previous blocks */
 #define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE(((char *)(bp) - WSIZE))) // 내 head에서 size를 얻어 bp 에서 더하기
@@ -92,15 +92,15 @@ int mm_init(void)
     /* Create the initial empty heap */
     if ((heap_listp = mem_sbrk(6 * WSIZE)) == (void *)-1) // 메모리에서 6word 가져와서 빈 가용 리스트 초기화
         return -1;
-    PUT(heap_listp, 0);                            /* Alignment padding */
-    PUT(heap_listp + (1 * WSIZE), PACK(DSIZE*2, 1)); /* Prologue header */
-    PUT(heap_listp + (2 * WSIZE), NULL); /* prev */
-    PUT(heap_listp + (3 * WSIZE), NULL); /* next */
-    PUT(heap_listp + (4 * WSIZE), PACK(DSIZE*2, 1)); /* Prologue footer */
-    PUT(heap_listp + (5 * WSIZE), PACK(0, 1));     /* Epilogue header */
+    PUT(heap_listp, 0);                                /* Alignment padding */
+    PUT(heap_listp + (1 * WSIZE), PACK(DSIZE * 2, 1)); /* Prologue header */
+    PUT(heap_listp + (2 * WSIZE), NULL);               /* prev */
+    PUT(heap_listp + (3 * WSIZE), NULL);               /* next */
+    PUT(heap_listp + (4 * WSIZE), PACK(DSIZE * 2, 1)); /* Prologue footer */
+    PUT(heap_listp + (5 * WSIZE), PACK(0, 1));         /* Epilogue header */
 
     heap_listp += (2 * WSIZE);
-    free_listp = heap_listp;                     
+    free_listp = heap_listp;
 
     /* Extend the empty heap with a free block of CHUNKSIZE bytes */
     if (extend_heap(CHUNKSIZE / WSIZE) == NULL)
@@ -108,8 +108,6 @@ int mm_init(void)
 
     return 0;
 }
-
-
 
 /*
  *extend_heap - 힙 늘려주기
@@ -144,14 +142,15 @@ void mm_free(void *bp)
     // 앞 뒤가 가용이면 연결
     coalesce(bp);
 }
-//문제
+// 문제
 static void *coalesce(void *bp)
 {
     size_t prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
     size_t next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
     size_t size = GET_SIZE(HDRP(bp));
     // case 1 가용 없음
-    if (prev_alloc && next_alloc){
+    if (prev_alloc && next_alloc)
+    {
         put_freelist(bp);
         return bp;
     }
@@ -175,7 +174,8 @@ static void *coalesce(void *bp)
     }
 
     // case 4 앞 뒤 가용
-    else {
+    else
+    {
         remove_freelist(PREV_BLKP(bp));
         remove_freelist(NEXT_BLKP(bp));
         size += GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp)));
@@ -187,25 +187,27 @@ static void *coalesce(void *bp)
     return bp;
 }
 
-void remove_freelist(void *bp){
-    if (bp == free_listp){
+void remove_freelist(void *bp)
+{
+    if (bp == free_listp)
+    {
         PREV_FREEP(NEXT_FREEP(bp)) = NULL;
         free_listp = NEXT_FREEP(bp);
     }
-    else{
-    NEXT_FREEP(PREV_FREEP(bp)) = NEXT_FREEP(bp);
-    PREV_FREEP(NEXT_FREEP(bp)) = PREV_FREEP(bp);
+    else
+    {
+        NEXT_FREEP(PREV_FREEP(bp)) = NEXT_FREEP(bp);
+        PREV_FREEP(NEXT_FREEP(bp)) = PREV_FREEP(bp);
     }
 }
 
-
-void put_freelist(void *bp){
+void put_freelist(void *bp)
+{
     NEXT_FREEP(bp) = free_listp;
     PREV_FREEP(bp) = NULL;
     PREV_FREEP(free_listp) = bp;
     free_listp = bp;
 }
-
 
 /*
  * mm_malloc - Allocate a block by incrementing the brk pointer.
@@ -248,7 +250,7 @@ void *mm_malloc(size_t size)
 static void *find_fit(size_t asize)
 {
     void *bp = free_listp;
-    while (GET_ALLOC(HDRP(bp)) != 1 ) // head만나면 break
+    while (GET_ALLOC(HDRP(bp)) != 1) // head만나면 break
     {
         if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
         {
@@ -283,8 +285,6 @@ static void place(void *bp, size_t asize)
         PUT(FTRP(bp), PACK(csize, 1));
     }
 }
-
-
 
 /*
  * mm_realloc - Implemented simply in terms of mm_malloc and mm_free
