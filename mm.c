@@ -82,7 +82,7 @@ static void *coalesce(void *bp);
 static void *find_fit(size_t asize);
 static void place(void *bp, size_t asize);
 static void add_free_block(void *bp);
-static void remove_free_block(void *bp); 
+static void remove_free_block(void *bp);
 
 static char *heap_listp;          // 항상 prologue block 을 가리키는 변수
 static void *free_list[LIST_NUM]; // 분리 가용 리스트 관리
@@ -136,7 +136,7 @@ static int find_index(size_t asize)
     int index;
     for (index = 0; index < LIST_NUM; index++)
     {
-        if (( 1 << (index+4)) >= asize)
+        if ((1 << (index + 4)) >= asize)
         {
             return index;
         }
@@ -219,7 +219,7 @@ static void *coalesce(void *bp)
     size_t size = GET_SIZE(HDRP(bp));
 
     // case 1 가용 없음
-    if (prev_alloc && next_alloc) 
+    if (prev_alloc && next_alloc)
     {
         add_free_block(bp);
         return bp;
@@ -302,8 +302,9 @@ static void *find_fit(size_t asize)
     for (int i = index; i < LIST_NUM; i++)
     {
         bp = free_list[i];
-        while (bp != NULL){
-            if (GET_SIZE(HDRP(bp))>= asize)
+        while (bp != NULL)
+        {
+            if (GET_SIZE(HDRP(bp)) >= asize)
                 return bp;
             bp = NEXT_LINK(bp);
         }
