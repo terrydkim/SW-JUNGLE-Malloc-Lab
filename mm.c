@@ -82,7 +82,7 @@ static void *coalesce(void *bp);
 static void *find_fit(size_t asize);
 static void place(void *bp, size_t asize);
 static void add_free_block(void *bp);
-static void remove_free_block(void *bp);
+static void remove_free_block(void *bp); 
 
 static char *heap_listp;          // 항상 prologue block 을 가리키는 변수
 static void *free_list[LIST_NUM]; // 분리 가용 리스트 관리
