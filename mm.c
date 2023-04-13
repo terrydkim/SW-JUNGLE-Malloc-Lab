@@ -136,7 +136,7 @@ static int find_index(size_t asize)
     int index;
     for (index = 0; index < LIST_NUM; index++)
     {
-        if ((1 << (index + 4)) >= asize)
+        if ((1 << index) >= asize)
         {
             return index;
         }
